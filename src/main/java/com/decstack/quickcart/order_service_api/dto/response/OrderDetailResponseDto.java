@@ -1,4 +1,4 @@
-package com.decstack.quickcart.order_service_api.dto.request;
+package com.decstack.quickcart.order_service_api.dto.response;
 
 
 import lombok.AllArgsConstructor;
@@ -6,18 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class OrderDetailRequestDto {
+public class OrderDetailResponseDto {
+    private String detailId;
     private String ProductId;
     private int qty;
-    private double unitprice;
+    private double unitPrice;
     private double discount;
 
 

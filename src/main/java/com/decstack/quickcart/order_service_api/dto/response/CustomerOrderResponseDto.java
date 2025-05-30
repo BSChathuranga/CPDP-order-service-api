@@ -1,5 +1,6 @@
-package com.decstack.quickcart.order_service_api.dto.request;
+package com.decstack.quickcart.order_service_api.dto.response;
 
+import com.decstack.quickcart.order_service_api.dto.request.OrderDetailRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CustomerOrderRequestDto {
+public class CustomerOrderResponseDto {
+    private String orderId;
     private Date orderDate;
     private double totalAmount;
     private String userId;
+    private String remark;
+    private String status;
     private ArrayList<OrderDetailRequestDto> orderDetails;
 
 }

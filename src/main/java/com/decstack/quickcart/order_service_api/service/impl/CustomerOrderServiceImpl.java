@@ -1,5 +1,6 @@
 package com.decstack.quickcart.order_service_api.service.impl;
 
+
 import com.decstack.quickcart.order_service_api.dto.request.CustomerOrderRequestDto;
 import com.decstack.quickcart.order_service_api.dto.request.OrderDetailRequestDto;
 import com.decstack.quickcart.order_service_api.entitiy.CustomerOrder;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -27,17 +29,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public void createOrder(CustomerOrderRequestDto requestDto) {
-        OrderStatus orderStatus = orderStatusRepo.findByStatus("PENDING").orElseThrow(()->  new RuntimeException("Order Status Not Found. so you can't place an order please contact admin"));
+        OrderStatus orderStatus = orderStatusRepo.findByStatus("PENDING").orElseThrow(()-> new RuntimeException("Order Status Not Found. so you can't place an order please contact admin"));
 
         CustomerOrder customerOrder = new CustomerOrder();
         customerOrder.setOrderId(UUID.randomUUID().toString());
-        customerOrder.getOrderDate(requestDto.getOrderdate());
+        customerOrder.setOrderDate(requestDto.getOrderDate());
         customerOrder.setRemark("");
-        customerOrder.setTotalAmount(requestDto.getTotalAmiunt());
+        customerOrder.setTotalAmount(requestDto.getTotalAmount());
         customerOrder.setUserId(requestDto.getUserId());
         customerOrder.setOrderStatus(orderStatus);
         customerOrder.setProducts(
-                requestDto.getOrderDetails().stream().map(e->createOrderDetail(e,customerOrder)).collect(Collectors.toSet())
+                requestDto.getOrderDetails().stream().map(e ->createOrderDetail(e,customerOrder)).collect(Collectors.toSet())
         );
         customerOrderRepo.save(customerOrder);
 
@@ -49,11 +51,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return null;
         }
         return OrderDetail.builder()
-                .detailId(UUID.randomUUID().toString())
-                .unitPrice(requestDto.getUnitPrice())
+                .detail_id(UUID.randomUUID().toString())
+                .unitprice(requestDto.getUnitprice())
                 .discount(requestDto.getDiscount())
                 .qty(requestDto.getQty())
-                .customerOrder()
+                .customerOrder(order)
                 .build();
 
 

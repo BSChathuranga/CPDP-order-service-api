@@ -1,6 +1,6 @@
 package com.decstack.quickcart.order_service_api.entitiy;
 
-
+import lombok.Builder;
 import jakarta.persistence.*;
 import lombok.*;
 
