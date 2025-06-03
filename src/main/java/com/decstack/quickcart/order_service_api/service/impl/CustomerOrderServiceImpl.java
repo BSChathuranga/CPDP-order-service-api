@@ -72,7 +72,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void manageStatus(String status,String orderId) {
         CustomerOrder customerOrder =
                 customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
-        OrderStatus orderStatus = orderStatusRepo.findByStatus("PENDING").orElseThrow(()-> new RuntimeException("Order Status Not Found. so you can't place an order please contact admin"));
+        OrderStatus orderStatus = orderStatusRepo.findByStatus(status).orElseThrow(()-> new RuntimeException("Order Status Not Found. so you can't place an order please contact admin"));
         customerOrder.setOrderStatus(orderStatus);
         customerOrderRepo.save(customerOrder);
     }
