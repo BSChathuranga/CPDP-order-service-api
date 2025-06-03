@@ -1,9 +1,11 @@
 package com.decstack.quickcart.order_service_api.service.impl;
 
 
+
 import com.decstack.quickcart.order_service_api.dto.request.CustomerOrderRequestDto;
 import com.decstack.quickcart.order_service_api.dto.request.OrderDetailRequestDto;
 import com.decstack.quickcart.order_service_api.dto.response.CustomerOrderResponseDto;
+import com.decstack.quickcart.order_service_api.dto.response.paginate.CustomerOrderPaginateDto;
 import com.decstack.quickcart.order_service_api.entitiy.CustomerOrder;
 import com.decstack.quickcart.order_service_api.entitiy.OrderDetail;
 import com.decstack.quickcart.order_service_api.entitiy.OrderStatus;
@@ -12,6 +14,7 @@ import com.decstack.quickcart.order_service_api.repo.OrderStatusRepo;
 import com.decstack.quickcart.order_service_api.service.CustomerOrderService;
 import jakarta.persistence.criteria.Order;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -45,15 +48,64 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         );
         customerOrderRepo.save(customerOrder);
 
+    }
 
+    @Override
+    public void updateOrder(CustomerOrderRequestDto requestDto,String orderId) {
+        CustomerOrder customerOrder =
+                customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
+        customerOrder.setOrderDate(requestDto.getOrderDate());
+        customerOrder.setTotalAmount(requestDto.getTotalAmount());
+        customerOrderRepo.save(customerOrder);
+    }
+
+    @Override
+    public void manageRemark(String remark,String orderId) {
+        CustomerOrder customerOrder =
+                customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
+        customerOrder.setRemark(remark);
+        customerOrderRepo.save(customerOrder);
 
     }
+
+    @Override
+    public void manageStatus(String status,String orderId) {
+        CustomerOrder customerOrder =
+                customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
+        OrderStatus orderStatus = orderStatusRepo.findByStatus("PENDING").orElseThrow(()-> new RuntimeException("Order Status Not Found. so you can't place an order please contact admin"));
+        customerOrder.setOrderStatus(orderStatus);
+        customerOrderRepo.save(customerOrder);
+    }
+
+
+
+
 
     @Override
     public CustomerOrderResponseDto findOrderById(String orderId) {
        CustomerOrder customerOrder =
                customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
         return toCustomerOrderResponseDto( customerOrder );
+    }
+    @Override
+    public void deleteById(String orderId) {
+        CustomerOrder customerOrder =
+                customerOrderRepo.findById(orderId).orElseThrow(() -> new RuntimeException(String.format("Order not Found with %s", orderId)));
+        customerOrderRepo.delete(customerOrder);
+
+    }
+    @Override
+    public CustomerOrderPaginateDto searchAll(String searchText, int page, int size) {
+        return CustomerOrderPaginateDto.builder()
+                .count(
+                        customerOrderRepo.searchCount(searchText)
+                )
+                .dataList(
+                        customerOrderRepo.searchAll(searchText, PageRequest.of(page,size))
+                                .stream().map(this::toCustomerOrderResponseDto).collect(Collectors.toList())
+                )
+
+                .build();
     }
 
     private CustomerOrderResponseDto toCustomerOrderResponseDto(CustomerOrder customerOrder) {
