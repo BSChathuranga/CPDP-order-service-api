@@ -4,8 +4,7 @@ import com.decstack.quickcart.order_service_api.dto.request.CustomerOrderRequest
 import com.decstack.quickcart.order_service_api.dto.response.CustomerOrderResponseDto;
 
 public interface CustomerOrderService {
-
     public void createOrder(CustomerOrderRequestDto requestDto);
-    public CustomerOrderResponseDto findOrderById(String OrderId);
+    public CustomerOrderResponseDto findOrderById(String orderId);
 
 }

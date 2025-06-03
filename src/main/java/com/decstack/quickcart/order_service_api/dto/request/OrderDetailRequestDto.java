@@ -1,10 +1,7 @@
 package com.decstack.quickcart.order_service_api.dto.request;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 
@@ -13,9 +10,11 @@ import java.util.ArrayList;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class OrderDetailRequestDto {
-    private String ProductId;
+    private String detailId;
+    private String productId;
     private int qty;
     private double unitprice;
     private double discount;

@@ -3,12 +3,14 @@ package com.decstack.quickcart.order_service_api.service.impl;
 
 import com.decstack.quickcart.order_service_api.dto.request.CustomerOrderRequestDto;
 import com.decstack.quickcart.order_service_api.dto.request.OrderDetailRequestDto;
+import com.decstack.quickcart.order_service_api.dto.response.CustomerOrderResponseDto;
 import com.decstack.quickcart.order_service_api.entitiy.CustomerOrder;
 import com.decstack.quickcart.order_service_api.entitiy.OrderDetail;
 import com.decstack.quickcart.order_service_api.entitiy.OrderStatus;
 import com.decstack.quickcart.order_service_api.repo.CustomerOrderRepo;
 import com.decstack.quickcart.order_service_api.repo.OrderStatusRepo;
 import com.decstack.quickcart.order_service_api.service.CustomerOrderService;
+import jakarta.persistence.criteria.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,43 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
 
     }
+
+    @Override
+    public CustomerOrderResponseDto findOrderById(String orderId) {
+       CustomerOrder customerOrder =
+               customerOrderRepo.findById(orderId).orElseThrow(()->new RuntimeException(String.format("Order not Found with %s", orderId)));
+        return toCustomerOrderResponseDto( customerOrder );
+    }
+
+    private CustomerOrderResponseDto toCustomerOrderResponseDto(CustomerOrder customerOrder) {
+        if (customerOrder == null) {
+            return null;
+        }
+         return CustomerOrderResponseDto.builder()
+                .orderId(customerOrder.getOrderId())
+                .orderDate(customerOrder.getOrderDate())
+                .userId(customerOrder.getUserId())
+                .totalAmount(customerOrder.getTotalAmount())
+                .orderDetails(
+                        customerOrder.getProducts().stream().map(this::toOrderDetailResponseDto).collect(Collectors.toList())
+                )
+                .remark(customerOrder.getRemark())
+                .status(customerOrder.getOrderStatus().getStatus())
+                .build();
+    }
+    private OrderDetailRequestDto toOrderDetailResponseDto(OrderDetail orderDetail) {
+        if (orderDetail == null) {
+            return null;
+        }
+        return OrderDetailRequestDto.builder()
+                .productId(orderDetail.getProductId())
+                .detailId(orderDetail.getDetail_id())
+                .discount(orderDetail.getDiscount())
+                .qty(orderDetail.getQty())
+                .unitprice(orderDetail.getUnitprice())
+                .build();
+    }
+
     private OrderDetail createOrderDetail(OrderDetailRequestDto requestDto, CustomerOrder order) {
         if (requestDto == null) {
             return null;
